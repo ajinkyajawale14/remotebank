@@ -1,1 +1,0 @@
-print("hello remotebank - fairmoney")
