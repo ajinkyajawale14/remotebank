@@ -28,3 +28,14 @@ FairMoney Real Time Streaming & Ingesion Data Platform
 2. run the docker container
 
 `docker run remotebank:latest`
+
+## kafka setup
+
+- create docker-compose.yml file write config
+- `docker compose up -d`
+
+- set up kafka topic retention policy
+`docker exec -it redpanda-0 rpk topic alter-config transactions --set retention.ms=86400000` 
+
+- add 2 partitions in kafka topic-transactions
+`docker exec -it redpanda-0 rpk topic add-partitions transactions --num 2`
