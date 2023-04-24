@@ -67,3 +67,25 @@ services:
       - 8080:8080
     depends_on:
       - redpanda-0
+
+  jobmanager:
+    image: flink:1.14.0-scala_2.12
+    command: jobmanager
+    ports:
+      - "8081:8081"
+  taskmanager:
+    image: flink:1.14.0-scala_2.12
+    command: taskmanager
+    links:
+      - jobmanager
+  consumer:
+    build:
+      context: .
+    image: pyflink-consumer:latest
+    links:
+      - jobmanager
+      - redpanda-0
+    depends_on:
+      - redpanda-0
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "localhost:19092"
