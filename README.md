@@ -31,6 +31,9 @@ FairMoney Real Time Streaming & Ingesion Data Platform
 
 ## kafka setup
 
+- create docker-compose.yml file write config
+- `docker compose up -d`
+
 - set up kafka topic retention policy
 `docker exec -it redpanda-0 rpk topic alter-config transactions --set retention.ms=86400000` 
 
