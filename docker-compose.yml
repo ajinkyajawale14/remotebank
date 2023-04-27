@@ -68,24 +68,48 @@ services:
     depends_on:
       - redpanda-0
 
+  redpanda-1:
+    hostname: redpanda-1
+    command:
+    - redpanda
+    - start
+    - --smp
+    - '1'
+    - --reserve-memory
+    - 0M
+    - --overprovisioned
+    - --node-id
+    - '0'
+    - --kafka-addr
+    - PLAINTEXT://redpanda-1:29092,OUTSIDE://redpanda-1:9092
+    - --advertise-kafka-addr
+    - PLAINTEXT://redpanda-1:29092,OUTSIDE://redpanda-1:9092
+    image: docker.vectorized.io/vectorized/redpanda:latest
+    container_name: redpanda-1
+    ports:
+    - "9092:9092"
+    - "9644:9644"
+
   jobmanager:
-    image: flink:1.14.0-scala_2.12
-    command: jobmanager
+    hostname: flink-jobmanager
+    image: flink:latest
     ports:
       - "8081:8081"
-  taskmanager:
-    image: flink:1.14.0-scala_2.12
-    command: taskmanager
-    links:
-      - jobmanager
-  consumer:
-    build:
-      context: .
-    image: pyflink-consumer:latest
-    links:
-      - jobmanager
-      - redpanda-0
-    depends_on:
-      - redpanda-0
+    command: jobmanager
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: "localhost:19092"
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+
+  taskmanager:
+    hostname: flink-taskmanager
+    image: flink:latest
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2

@@ -35,7 +35,7 @@ input_schema = Schema.new_builder() \
 kafka_consumer = FlinkKafkaConsumer(
     'transactions',
     input_schema,
-    properties=kafka_props
+    properties=kafka_props,
     # use flink buffer size for optimization
     max_num_records=1000
 )
